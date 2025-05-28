@@ -26,6 +26,16 @@ Seu Manoel possui os seguintes tamanhos de **caixas de papelão** (altura x larg
 - Maven
 - Spring tool Suit STS
 
+
+  ## Execução do projeto
+  
+  importar no spring tool suit e executar docker compose antes com
+  - docker compose up -d para subir o banco
+  - logo em seguida pode startar normalmente na ide de preferencia usar Spring Tool Suit
+
+  ## Projeto endpoint do swagger
+  http://localhost:8080/swagger-ui/index.html
+
 ---
 
 ## 📥 Formato de Entrada (Exemplo)
