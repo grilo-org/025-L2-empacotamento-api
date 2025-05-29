@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: box-service
   datasource:
     url: jdbc:postgresql://localhost:5432/tks
     username: postgres
@@ -13,19 +15,12 @@ spring:
     show-sql: true
 
 server:
-  port: 8080
+  port: 8082
+  servlet:
+    context-path: /box-service
 
-volume:
-  calculator:
-    service:
-      url: http://localhost:8081/volume-service 
-      timeout: 5000
-
-box:
-  service:
-    url: http://localhost:8082/box-service
-
-logging:
-  level:
-    org.springframework.web.client.RestTemplate: DEBUG
-    com.l2.empacotamento.client: TRACE
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
