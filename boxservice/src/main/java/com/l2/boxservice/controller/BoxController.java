@@ -1,6 +1,7 @@
 package com.l2.boxservice.controller;
 
 
+import com.l2.boxservice.dto.request.ProductFitRequest;
 import com.l2.boxservice.model.Caixa;
 import com.l2.boxservice.service.BoxService;
 import org.springframework.http.ResponseEntity;
@@ -33,14 +34,14 @@ public class BoxController {
         return boxService.getBoxesSortedByVolume();
     }
 
-    @GetMapping("/fits")
-    public ResponseEntity<Boolean> productFitsInBox(
-            @RequestParam double altura,
-            @RequestParam double largura,
-            @RequestParam double comprimento,
-            @RequestParam Long caixaId) {
-
-        boolean fits = boxService.productFitsInBox(altura, largura, comprimento, caixaId);
+    @PostMapping("/fits")
+    public ResponseEntity<Boolean> productFitsInBox(@RequestBody ProductFitRequest request) {
+        boolean fits = boxService.productFitsInBox(
+                request.getAltura(),
+                request.getLargura(),
+                request.getComprimento(),
+                request.getCaixaId()
+        );
         return ResponseEntity.ok(fits);
     }
 }

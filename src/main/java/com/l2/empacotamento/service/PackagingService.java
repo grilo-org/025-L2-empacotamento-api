@@ -4,6 +4,7 @@ import com.l2.empacotamento.dto.request.PackagingRequest;
 import com.l2.empacotamento.dto.response.PackagingResponse;
 import com.l2.empacotamento.processor.PedidoProcessor;
 import com.l2.empacotamento.restclient.BoxServiceClient;
+import com.l2.empacotamento.restclient.PedidoServiceClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class PackagingService {
 
     private final BoxServiceClient boxServiceClient;
-    private final PedidoProcessor pedidoProcessor;
+    private final PedidoServiceClient pedidoProcessor;
 
     public PackagingService(BoxServiceClient boxServiceClient,
-                            PedidoProcessor pedidoProcessor) {
+                            PedidoServiceClient pedidoProcessor) {
         this.boxServiceClient = boxServiceClient;
         this.pedidoProcessor = pedidoProcessor;
     }
@@ -25,10 +26,6 @@ public class PackagingService {
 
     @Transactional(readOnly = true)
     public PackagingResponse processarPedidos(PackagingRequest request) {
-        return new PackagingResponse(
-                request.getPedidos().stream()
-                        .map(pedidoProcessor::processar)
-                        .toList()
-        );
+        return pedidoProcessor.processarPedidos(request);
     }
 }

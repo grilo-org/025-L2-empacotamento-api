@@ -13,21 +13,18 @@ spring:
     show-sql: true
 
 server:
-  port: 8080
+  port: 8083
+  servlet:
+    context-path: /pedido-service
 
 volume:
-  calculator:
-    service:
-      url: http://localhost:8081/volume-service 
-      timeout: 5000
+  service:
+    url: http://localhost:8081/volume-service
+    timeout: 5000
 
 box:
   service:
     url: http://localhost:8082/box-service
-
-pedido:
-  service:
-    url: http://localhost:8083/pedido-service
 
 logging:
   level:
