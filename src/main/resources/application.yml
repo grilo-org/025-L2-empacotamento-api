@@ -14,3 +14,14 @@ spring:
 
 server:
   port: 8080
+
+volume:
+  calculator:
+    service:
+      url: http://localhost:8081/volume-service 
+      timeout: 5000  
+
+logging:
+  level:
+    org.springframework.web.client.RestTemplate: DEBUG
+    com.l2.empacotamento.client: TRACE

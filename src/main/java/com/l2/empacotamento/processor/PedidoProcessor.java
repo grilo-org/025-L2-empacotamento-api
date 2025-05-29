@@ -1,9 +1,9 @@
 package com.l2.empacotamento.processor;
 
-import com.l2.empacotamento.calculator.ProdutoVolumeCalculator;
 import com.l2.empacotamento.dto.request.PackagingRequest;
 import com.l2.empacotamento.dto.response.PackagingResponse;
 import com.l2.empacotamento.model.Caixa;
+import com.l2.empacotamento.restclient.VolumeCalculatorClient;
 import com.l2.empacotamento.selector.CaixaSelectorService;
 import org.springframework.stereotype.Component;
 
@@ -13,18 +13,20 @@ import java.util.*;
 public class PedidoProcessor {
 
     private final CaixaSelectorService caixaSelector;
-    private final ProdutoVolumeCalculator volumeCalculator;
+    private final VolumeCalculatorClient volumeClient;
 
-    public PedidoProcessor(CaixaSelectorService caixaSelector, ProdutoVolumeCalculator volumeCalculator) {
+    public PedidoProcessor(CaixaSelectorService caixaSelector, 
+                         VolumeCalculatorClient volumeClient) {
         this.caixaSelector = caixaSelector;
-        this.volumeCalculator = volumeCalculator;
+        this.volumeClient = volumeClient;
     }
 
     public PackagingResponse.PedidoResponse processar(PackagingRequest.PedidoRequest pedidoRequest) {
         List<PackagingResponse.CaixaResponse> caixas = new ArrayList<>();
         List<PackagingRequest.ProdutoRequest> produtosRestantes = new ArrayList<>(pedidoRequest.getProdutos());
 
-        produtosRestantes.sort(Comparator.comparingDouble(volumeCalculator::calcularVolume).reversed());
+        produtosRestantes.sort(Comparator.comparingDouble(volumeClient::calculateProductVolume).reversed());
+        
         List<Caixa> caixasOrdenadas = caixaSelector.caixasOrdenadasPorVolume();
 
         while (!produtosRestantes.isEmpty()) {
@@ -36,7 +38,7 @@ public class PedidoProcessor {
 
                 for (PackagingRequest.ProdutoRequest produto : new ArrayList<>(produtosRestantes)) {
                     if (caixaSelector.produtoCabeNaCaixa(produto, caixa)) {
-                        double volumeProduto = volumeCalculator.calcularVolume(produto);
+                        double volumeProduto = volumeClient.calculateProductVolume(produto);
                         if (volumeProduto <= volumeDisponivel) {
                             produtosNaCaixa.add(produto);
                             volumeDisponivel -= volumeProduto;
