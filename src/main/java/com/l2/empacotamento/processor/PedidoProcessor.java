@@ -12,12 +12,12 @@ import java.util.*;
 @Component
 public class PedidoProcessor {
 
-    private final CaixaSelectorService caixaSelector;
+    private final CaixaSelectorService boxSelector;
     private final VolumeCalculatorClient volumeClient;
 
-    public PedidoProcessor(CaixaSelectorService caixaSelector, 
-                         VolumeCalculatorClient volumeClient) {
-        this.caixaSelector = caixaSelector;
+    public PedidoProcessor(CaixaSelectorService boxSelector,
+                           VolumeCalculatorClient volumeClient) {
+        this.boxSelector = boxSelector;
         this.volumeClient = volumeClient;
     }
 
@@ -26,8 +26,8 @@ public class PedidoProcessor {
         List<PackagingRequest.ProdutoRequest> produtosRestantes = new ArrayList<>(pedidoRequest.getProdutos());
 
         produtosRestantes.sort(Comparator.comparingDouble(volumeClient::calculateProductVolume).reversed());
-        
-        List<Caixa> caixasOrdenadas = caixaSelector.caixasOrdenadasPorVolume();
+
+        List<Caixa> caixasOrdenadas = boxSelector.caixasOrdenadasPorVolume();
 
         while (!produtosRestantes.isEmpty()) {
             boolean empacotado = false;
@@ -37,7 +37,7 @@ public class PedidoProcessor {
                 double volumeDisponivel = caixa.getVolume();
 
                 for (PackagingRequest.ProdutoRequest produto : new ArrayList<>(produtosRestantes)) {
-                    if (caixaSelector.produtoCabeNaCaixa(produto, caixa)) {
+                    if (boxSelector.produtoCabeNaCaixa(produto, caixa)) {
                         double volumeProduto = volumeClient.calculateProductVolume(produto);
                         if (volumeProduto <= volumeDisponivel) {
                             produtosNaCaixa.add(produto);

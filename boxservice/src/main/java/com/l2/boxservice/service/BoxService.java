@@ -10,31 +10,40 @@ import java.util.List;
 @Service
 public class BoxService {
 
-    private final CaixaRepository CaixaRepository;
+    private final CaixaRepository caixaRepository;
 
     public BoxService(CaixaRepository CaixaRepository) {
-        this.CaixaRepository = CaixaRepository;
+        this.caixaRepository = CaixaRepository;
     }
 
     @Transactional
     public void initDefaultBoxes() {
-        if (CaixaRepository.count() == 0) {
+        if (caixaRepository.count() == 0) {
             List<Caixa> defaultBoxes = List.of(
                     new Caixa("Caixa 1", 30, 40, 80),
                     new Caixa("Caixa 2", 80, 50, 40),
                     new Caixa("Caixa 3", 50, 80, 60)
             );
-            CaixaRepository.saveAll(defaultBoxes);
+            caixaRepository.saveAll(defaultBoxes);
         }
     }
 
     @Transactional(readOnly = true)
     public List<Caixa> getAllBoxes() {
-        return CaixaRepository.findAll();
+        return caixaRepository.findAll();
     }
 
     @Transactional(readOnly = true)
     public List<Caixa> getBoxesSortedByVolume() {
-        return CaixaRepository.findAllOrderByVolumeAsc();
+        return caixaRepository.findAllOrderByVolumeAsc();
+    }
+
+    public boolean productFitsInBox(double altura, double largura, double comprimento, Long caixaId) {
+        Caixa caixa = caixaRepository.findById(caixaId)
+                .orElseThrow(() -> new RuntimeException("Caixa não encontrada"));
+
+        return altura <= caixa.getAltura() &&
+                largura <= caixa.getLargura() &&
+                comprimento <= caixa.getComprimento();
     }
 }
